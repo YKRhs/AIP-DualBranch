@@ -1,0 +1,56 @@
+{
+  "model_name": "AIP dual-branch final model",
+  "built_at_local_time": "2026-10-24 01:26:54",
+  "elapsed_seconds": 768.7817974090576,
+  "plm": {
+    "reload_max_absolute_error": 0.0,
+    "independent_test_metrics": {
+      "AUC": 0.8095536959553696,
+      "ACC": 0.7637231503579952,
+      "MCC": 0.5135617591794783,
+      "Sn": 0.6388888888888888,
+      "Sp": 0.8577405857740585,
+      "Pre": 0.7718120805369127,
+      "F1": 0.6990881458966566
+    }
+  },
+  "dde": {
+    "independent_test_metrics": {
+      "AUC": 0.8503835425383544,
+      "ACC": 0.766109785202864,
+      "MCC": 0.5191329245035041,
+      "Sn": 0.6277777777777778,
+      "Sp": 0.8702928870292888,
+      "Pre": 0.7847222222222222,
+      "F1": 0.6975308641975309
+    }
+  },
+  "meta": {
+    "training_rows": 3775,
+    "parameters": {
+      "C": 0.11,
+      "positive_class_weight": 1.56,
+      "penalty": "l2",
+      "solver": "liblinear",
+      "intercept_scaling": 2.0,
+      "max_iter": 5000,
+      "random_state": 42
+    }
+  },
+  "deployment_independent_test_metrics": {
+    "AUC": 0.855857740585774,
+    "ACC": 0.8090692124105012,
+    "MCC": 0.6094584973923964,
+    "Sn": 0.7666666666666667,
+    "Sp": 0.8410041841004184,
+    "Pre": 0.7840909090909091,
+    "F1": 0.7752808988764045
+  },
+  "artifact_sha256": {
+    "dde_scaler.joblib": "553653b9c34c60ce63f662d4ea9749133d5b42ad619f9c6ca25b9a688d544c15",
+    "dde_tabicl.pkl": "7bf44d64326723b073109ce3af66c8061f1beb0d2ce94cd265f3db8c2351a7cd",
+    "meta_lr.joblib": "c5fe2424a0e2b6ec6d0b2e880e73d0ee47cce4ab3f1f1f1ef483703c43e87d91",
+    "plm_grande.pkl": "86391f7785b8cc82b40dd625db4772fe0e49a593a91fd86393e4399567925a93",
+    "plm_scaler.joblib": "277b6ca781f424b876ce1d11dbc73bdf39fc5abc6f72755baf9aae52ef333e2d"
+  }
+}

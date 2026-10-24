@@ -1,0 +1,40 @@
+# Private machine-specific configuration
+configs/inference.local.json
+configs/local_runtime.bat
+
+# Model files distributed separately or through Git LFS/releases
+artifacts/*.joblib
+artifacts/*.pkl
+artifacts/tabicl_offload/
+checkpoints/*
+!checkpoints/README.md
+models/*
+!models/README.md
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+*.mmap
+
+# Generated outputs
+results/*
+!results/.gitkeep
+cache/
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environments, editors, and operating-system files
+.venv/
+venv/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

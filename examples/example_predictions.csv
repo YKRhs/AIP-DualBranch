@@ -1,0 +1,3 @@
+"ID","Sequence","Length","Length_Note","PLM_Probability","DDE_Probability","Final_Probability","Prediction","Prediction_Label"
+"example_1","FLPLIGRVLSGIL","13","","0.73954314","0.82048547","0.84633678","1","AIP"
+"example_2","GIGKFLHSAKKFGKAFVGEIMNS","23","","0.98649108","0.71639496","0.80728458","1","AIP"

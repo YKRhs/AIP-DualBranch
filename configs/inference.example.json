@@ -1,0 +1,24 @@
+{
+  "model_name": "AIP dual-branch predictor",
+  "threshold": 0.5,
+  "paths": {
+    "plm_base_model": "../models/plm_base",
+    "plm_fold_weights": [
+      "../checkpoints/fold1_best.pt",
+      "../checkpoints/fold2_best.pt",
+      "../checkpoints/fold3_best.pt",
+      "../checkpoints/fold4_best.pt",
+      "../checkpoints/fold5_best.pt"
+    ],
+    "artifacts_dir": "../artifacts",
+    "cache_dir": "../cache",
+    "results_dir": "../results"
+  },
+  "plm": {
+    "feature_name": "ft_cls_l2",
+    "feature_dimension": 1280,
+    "max_length": 384,
+    "batch_size": 4,
+    "tnfa_sequence": "MSTESMIRDVELAEEALPKKTGGPQGSRRCLFLSLFSFLIVAGATTLFCLLHFGVIGPQREEFPRDLSLISPLAQAVRSSSRTPSDKPVAHVVANPQAEGQLQWLNRRANALLANGVELRDNQLVVPSEGLYLIYSQVLFKGQGCPSTHVLLTHTISRIAVSYQTKVNLLSAIKSPCQRETPEGAEAKPWYEPIYLGGVFQLEKGDRLSAEINRPDYLDFAESGQVYFGIIAL"
+  }
+}

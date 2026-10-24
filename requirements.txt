@@ -1,0 +1,12 @@
+numpy==1.26.4
+pandas==2.3.3
+scikit-learn==1.7.2
+joblib==1.5.2
+torch==2.6.0
+transformers==4.56.2
+tabicl==2.1.1
+tensorflow==2.20.0
+category-encoders==2.8.1
+GRANDE==0.2.0
+gradio==5.49.1
+
