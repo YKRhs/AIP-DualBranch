@@ -1,70 +1,134 @@
-# AIP Dual-Branch Predictor
+# AIP-DualBranch
 
-This repository contains the local inference package for a finalized anti-inflammatory peptide (AIP) classifier. The model combines two complementary branches:
+Research code and evaluation records for a dual-branch anti-inflammatory
+peptide (AIP) classifier. The method combines complementary protein language
+model (PLM) and dipeptide deviation from expected mean (DDE) representations.
+The local predictor in `app/` is an optional demonstration, not the main scope
+of this repository.
 
-- a five-fold fine-tuned protein language model (PLM) representation followed by scaling and GRANDE;
-- a 400-dimensional dipeptide deviation from expected mean (DDE) representation followed by scaling and TabICLv2;
-- a fixed logistic-regression fusion layer built from seven probability-derived inputs.
+## Method overview
 
-The default decision threshold is 0.5. All inference runs locally. The web interface binds to `127.0.0.1` and does not send sequences to an external service.
+```text
+Peptide + TNF-alpha
+  -> five-fold fine-tuned PLM
+  -> average 1280D penultimate-layer CLS representation
+  -> branch-specific improved QC-SMOTE
+  -> GRANDE
+  -> p_plm
+
+Peptide
+  -> 400D NeXtMD-DDE representation
+  -> branch-specific improved QC-SMOTE
+  -> TabICLv2
+  -> p_dde
+
+p_plm + p_dde
+  -> seven probability-derived inputs
+  -> fixed logistic regression
+  -> final AIP probability (threshold = 0.5)
+```
+
+Model selection uses training-side cross-validation and strict out-of-fold
+(OOF) predictions. Independent-test labels are reserved for final evaluation.
+
+## Fixed data split
+
+| Split | Samples | Positive | Negative | Maximum length |
+|---|---:|---:|---:|---:|
+| Training | 3,775 | 1,498 | 2,277 | 25 |
+| Independent test | 419 | 180 | 239 | 25 |
+
+The two splits have no sequence overlap. The exact FASTA files are provided in
+`data/splits/` because this split is required for comparable evaluation.
+
+## Final independent-test result
+
+| AUC | ACC | MCC | Sn | Sp | Precision | F1 |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0.8559 | 0.8091 | 0.6095 | 0.7667 | 0.8410 | 0.7841 | 0.7753 |
+
+The row-level predictions and branch probabilities are stored in
+`evaluation/independent_test_predictions.csv`.
 
 ## Repository layout
 
 ```text
 AIP-DualBranch/
-|-- app/                 Local Gradio web interface
-|-- artifacts/           Fitted downstream classifiers and scalers
-|-- cache/               Generated PLM feature cache (not committed)
-|-- checkpoints/         Five fine-tuned PLM checkpoints (not committed)
-|-- configs/             Portable and private inference configurations
-|-- docs/                Inference, architecture, and reproduction notes
-|-- examples/            Example FASTA input and expected output
-|-- models/              PLM base model (not committed)
-|-- results/             Generated prediction files
-|-- scripts/             User-facing command-line utilities
-|-- src/aip_predictor/   Internal inference modules
-`-- tests/               Lightweight unit tests
+|-- data/                  Fixed train/test sequence split
+|-- experiments/           Research workflow, code, and method notes
+|-- evaluation/            Reported metrics and row-level predictions
+|-- src/aip_predictor/      Reusable inference implementation
+|-- scripts/               Command-line prediction and installation checks
+|-- app/                   Optional local Gradio predictor
+|-- tests/                 Lightweight regression and unit tests
+|-- artifacts/             Fitted small/downstream artifacts (external)
+|-- checkpoints/           Five fine-tuned PLM weights (external)
+|-- models/                Base PLM files (external)
+`-- docs/                  Architecture, code guide, and reproducibility scope
 ```
 
-Files under `src/aip_predictor` are library modules. They are imported by the two user-facing entry points and are not intended to be run individually.
+Start with [docs/CODE_GUIDE.md](docs/CODE_GUIDE.md) for the purpose and command
+of every code group. The staged research workflow is documented in
+[experiments/README.md](experiments/README.md).
 
-## Quick start on the configured Windows computer
+## Reproduce lightweight stages
 
-1. Double-click `start_web.bat`.
-2. Wait until the terminal reports `Running on local URL`.
-3. Open `http://127.0.0.1:7860` if the browser does not open automatically.
-4. Paste one or more peptide sequences, or upload a FASTA file, and select **Run prediction**.
-
-The private file `configs/inference.local.json` already points to the PLM base model and five fine-tuned checkpoints in the current workspace. This file is excluded from Git because its paths are machine-specific.
-
-## Command-line prediction
-
-```powershell
-python scripts/predict.py --input examples/example_sequences.fasta
-```
-
-The result is written to `results/predictions.csv` unless `--output` is supplied. See [docs/INFERENCE.md](docs/INFERENCE.md) for complete setup and usage instructions.
-
-## Installation on another computer
-
-Create a Python 3.10 environment and install the pinned packages:
+Create the environment:
 
 ```bash
-python -m pip install -r requirements.txt
+conda env create -f environment.yml
+conda activate aip-dual-branch
 ```
 
-Then place the external model files in `models/` and `checkpoints/`, or create `configs/inference.local.json` from `configs/inference.example.json` and point it to their actual locations. Run:
+Extract DDE features from the fixed split:
+
+```bash
+python experiments/feature_extraction/extract_features.py --feature dde
+```
+
+Reproduce the finalized seven-input fusion from archived strict OOF branch
+probabilities:
+
+```bash
+python experiments/fusion/fit_fixed_fusion.py
+```
+
+The PLM feature route additionally requires the external base model and five
+fold checkpoints. Full branch retraining requires GRANDE and TabICLv2 and is
+substantially more expensive. See [docs/REPRODUCTION.md](docs/REPRODUCTION.md)
+for the exact supported boundary.
+
+## Optional local predictor
+
+After configuring the external model files, run:
 
 ```bash
 python scripts/check_installation.py
+python app/web_app.py
 ```
 
-## Model files and GitHub
+The interface accepts pasted sequences or a FASTA upload and runs only on the
+local computer. Detailed instructions are in [docs/INFERENCE.md](docs/INFERENCE.md).
 
-The PLM base model is several gigabytes, each fine-tuned checkpoint is approximately 2.6 GB, and the five checkpoints together are approximately 13 GB. They should not be committed to ordinary Git history. Use a documented external archive, a model repository, Git LFS subject to its quota, or GitHub Releases subject to current size limits. The lightweight source repository should retain only the path templates and download instructions.
+## Large model files
 
-## Reproducibility scope
+The base PLM and five fine-tuned checkpoints are intentionally excluded from
+Git history. The five checkpoints are approximately 13 GB in total. Their
+release location and checksums must be added before a public archival release.
 
-This package currently supports reproducible inference from the finalized fitted artifacts. It does not yet provide a complete one-command reconstruction from raw training data, including five-fold PLM fine-tuning, improved QC-SMOTE, branch training, and out-of-fold fusion fitting. The exact boundary is documented in [docs/REPRODUCTION.md](docs/REPRODUCTION.md).
+## Reproducibility statement
 
-No files have been uploaded to GitHub from this working directory.
+This repository currently supports:
+
+- exact DDE extraction;
+- feature extraction from the five archived PLM checkpoints;
+- finalized-model inference;
+- fixed fusion reconstruction from strict OOF branch probabilities;
+- verification of the reported 419-sample independent-test predictions.
+
+The original program that produced the five fold-specific PLM checkpoints has
+not yet been recovered from the experimental workspace. A separate one-split
+prototype exists, but its split and classifier head do not match the archived
+five-fold checkpoints and is therefore not published as the training entry
+point. This limitation is stated explicitly to avoid overstating the current
+reproduction scope.

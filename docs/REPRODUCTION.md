@@ -1,35 +1,57 @@
 # Reproduction scope
 
-## Available now: finalized-model inference
+## Status matrix
 
-The repository contains the complete inference implementation for:
+| Stage | Status | Public entry point |
+|---|---|---|
+| Fixed data split | Available | `data/splits/` |
+| DDE extraction | Runnable | `experiments/feature_extraction/extract_features.py` |
+| PLM feature extraction from five weights | Runnable with external files | same script with `--feature plm` |
+| Exact QC-SMOTE implementation | Runnable | `experiments/sampling/resample_features.py` |
+| PLM five-fold fine-tuning from the base PLM | Not yet packaged | original exact entry point was not recovered |
+| GRANDE and TabICLv2 branch reconstruction | Documented, external dependencies required | `experiments/branch_models/README.md` |
+| Fixed seven-input fusion | Runnable | `experiments/fusion/fit_fixed_fusion.py` |
+| Final inference | Runnable with external files | `scripts/predict.py` or `app/web_app.py` |
+| Ablation protocol | Documented | `experiments/ablation/README.md` |
+| Baseline protocol | Documented | `experiments/baselines/README.md` |
+| Explainability protocol | Documented | `experiments/explainability/README.md` |
 
-- sequence validation and FASTA parsing;
-- exact 400-dimensional DDE extraction;
-- five-checkpoint PLM representation extraction;
-- loading the fitted PLM and DDE branch models;
-- construction of the seven fusion inputs;
-- fixed-threshold prediction through the fitted fusion model;
-- web and command-line prediction interfaces.
+## External files
 
-With the external PLM base model, five fold checkpoints, and fitted artifacts present, another user can reproduce predictions from the finalized model.
+The following files are not stored in ordinary Git history:
 
-## Not yet packaged: complete training reconstruction
+- the PLM base model;
+- five fine-tuned PLM checkpoints (approximately 13 GB total);
+- the TabICLv2 pretrained checkpoint and disk-offload cache;
+- fitted deployment artifacts when their size exceeds normal Git limits;
+- generated PLM feature arrays and explanation caches.
 
-The current repository does not yet include a reviewed, one-command pipeline that starts from raw labeled sequences and reconstructs every fitted object. A complete training release would additionally require:
+Use `configs/inference.example.json` as the path template. A public release
+should provide checksums and a stable archive or model-repository URL for every
+external file.
 
-1. the exact fixed training and independent-test sequence files;
-2. the deterministic five-fold split definitions;
-3. PLM fine-tuning with the raw 15% early-stopping split inside each training fold;
-4. fold-local improved QC-SMOTE processing;
-5. strict out-of-fold fitting and prediction for both branches;
-6. finalized GRANDE and TabICLv2 training settings;
-7. seven-input logistic-regression fusion fitting from out-of-fold branch probabilities;
-8. checksum and metric regression tests for all regenerated artifacts.
+## Missing PLM training entry point
 
-Until these items are consolidated and independently checked, this repository should be described as a finalized-model inference release, not a complete raw-data training reproduction package.
+Five checkpoint files named
+`fold{1..5}_best_last4_cls_l2_finetune.pt` are available and their architecture
+is verified by inference. The experimental workspace also contains a quick
+single-split prototype. That prototype uses a 20% validation split and a
+different classifier head, so it cannot truthfully reproduce these five
+checkpoints. It is intentionally excluded from the public workflow.
 
-## Evaluation rule
+Until the exact original five-fold training entry point is recovered or
+independently reconstructed and validated against the checkpoints, this
+repository must not be described as a complete raw-data-to-weights
+reproduction.
 
-Independent-test labels must remain unused during model fitting, hyperparameter selection, early stopping, probability fusion, and threshold selection. They are used only once for final reporting.
+## Evaluation policy
 
+The fixed training set contains 3,775 sequences and the independent test set
+contains 419 sequences. Model selection, early stopping, sampling, fusion
+fitting, and threshold selection must use training data only. Independent-test
+labels are used once for final reporting.
+
+The branch probability files in `evaluation/base_probabilities/` contain strict
+training OOF predictions and independent-test predictions. They permit the
+fusion stage to be reproduced without rerunning the expensive PLM and TabICLv2
+branches.
