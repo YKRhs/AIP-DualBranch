@@ -4,11 +4,11 @@
   "paths": {
     "plm_base_model": "../models/plm_base",
     "plm_fold_weights": [
-      "../checkpoints/fold1_best.pt",
-      "../checkpoints/fold2_best.pt",
-      "../checkpoints/fold3_best.pt",
-      "../checkpoints/fold4_best.pt",
-      "../checkpoints/fold5_best.pt"
+      "../checkpoints/fold1_best_last4_cls_l2_finetune.pt",
+      "../checkpoints/fold2_best_last4_cls_l2_finetune.pt",
+      "../checkpoints/fold3_best_last4_cls_l2_finetune.pt",
+      "../checkpoints/fold4_best_last4_cls_l2_finetune.pt",
+      "../checkpoints/fold5_best_last4_cls_l2_finetune.pt"
     ],
     "artifacts_dir": "../artifacts",
     "cache_dir": "../cache",

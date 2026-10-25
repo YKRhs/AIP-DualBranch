@@ -6,6 +6,16 @@ programs that must be run manually.
 
 ## Research workflow
 
+### `experiments/plm_finetuning/`
+
+Purpose: start from the PLM-interact human STRING V12 base model and produce
+the five fold-specific AIP checkpoints.
+
+```bash
+python experiments/plm_finetuning/finetune_plm_tnfa_5fold.py \
+  --base-model models/plm_base --device cuda
+```
+
 ### `experiments/feature_extraction/`
 
 Purpose: convert the fixed FASTA split into either 400-dimensional DDE vectors
@@ -34,9 +44,16 @@ python experiments/sampling/resample_features.py \
 ### `experiments/branch_models/`
 
 Purpose: document the finalized PLM-GRANDE and DDE-TabICLv2 settings, strict OOF
-rules, inputs, and outputs. The original research scripts are not exposed as a
-single public command yet because they still depend on the unrecovered PLM
-fine-tuning entry point and large external models.
+rules, inputs, and outputs, and train both branch classifiers.
+
+```bash
+python experiments/branch_models/train_strict_branches.py \
+  --branch both --device cuda
+```
+
+PLM-GRANDE may be run with `--branch plm`, and DDE-TabICLv2 with
+`--branch dde`. The complete run emits aligned OOF and independent-test
+probability tables for the fusion stage.
 
 ### `experiments/fusion/`
 

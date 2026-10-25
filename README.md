@@ -98,6 +98,31 @@ fold checkpoints. Full branch retraining requires GRANDE and TabICLv2 and is
 substantially more expensive. See [docs/REPRODUCTION.md](docs/REPRODUCTION.md)
 for the exact supported boundary.
 
+## Full research workflow
+
+The recovered five-fold fine-tuning and strict branch-training entry points are
+also included. They require the external PLM-interact base model, substantial
+GPU time, and enough disk space for five checkpoints.
+
+```bash
+# 1. Fine-tune five PLM folds.
+python experiments/plm_finetuning/finetune_plm_tnfa_5fold.py \
+  --base-model models/plm_base --device cuda
+
+# 2. Extract fold-specific PLM features and the DDE matrices.
+python experiments/feature_extraction/extract_strict_plm_fold_features.py \
+  --checkpoint-dir checkpoints/training_run --seed 42 --device cuda
+python experiments/feature_extraction/extract_features.py --feature dde
+
+# 3. Train both strict-OOF branch classifiers.
+python experiments/branch_models/train_strict_branches.py --branch both --device cuda
+
+# 4. Fit the fixed seven-input fusion from the regenerated probabilities.
+python experiments/fusion/fit_fixed_fusion.py \
+  --oof results/branch_models/training_oof.csv \
+  --test results/branch_models/independent_test.csv
+```
+
 ## Optional local predictor
 
 After configuring the external model files, run:
@@ -118,17 +143,19 @@ release location and checksums must be added before a public archival release.
 
 ## Reproducibility statement
 
-This repository currently supports:
+This repository supports:
 
 - exact DDE extraction;
+- five-fold PLM fine-tuning with the recovered archived architecture and settings;
 - feature extraction from the five archived PLM checkpoints;
+- strict-OOF GRANDE and TabICLv2 branch training;
 - finalized-model inference;
 - fixed fusion reconstruction from strict OOF branch probabilities;
 - verification of the reported 419-sample independent-test predictions.
 
-The original program that produced the five fold-specific PLM checkpoints has
-not yet been recovered from the experimental workspace. A separate one-split
-prototype exists, but its split and classifier head do not match the archived
-five-fold checkpoints and is therefore not published as the training entry
-point. This limitation is stated explicitly to avoid overstating the current
-reproduction scope.
+The portable fine-tuning script was reconstructed from the recovered original
+five-fold program. Its architecture, splitter, optimization settings, stopping
+rule, and output names match the archived run. Because a full rerun is costly
+and framework/CUDA versions can affect numerical details, the tracked OOF
+probabilities remain the reference record rather than a claim of bitwise
+checkpoint reproduction.

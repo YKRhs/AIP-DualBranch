@@ -8,8 +8,8 @@
 | DDE extraction | Runnable | `experiments/feature_extraction/extract_features.py` |
 | PLM feature extraction from five weights | Runnable with external files | same script with `--feature plm` |
 | Exact QC-SMOTE implementation | Runnable | `experiments/sampling/resample_features.py` |
-| PLM five-fold fine-tuning from the base PLM | Not yet packaged | original exact entry point was not recovered |
-| GRANDE and TabICLv2 branch reconstruction | Documented, external dependencies required | `experiments/branch_models/README.md` |
+| PLM five-fold fine-tuning from the base PLM | Runnable with external base model | `experiments/plm_finetuning/finetune_plm_tnfa_5fold.py` |
+| GRANDE and TabICLv2 branch reconstruction | Runnable with external dependencies | `experiments/branch_models/train_strict_branches.py` |
 | Fixed seven-input fusion | Runnable | `experiments/fusion/fit_fixed_fusion.py` |
 | Final inference | Runnable with external files | `scripts/predict.py` or `app/web_app.py` |
 | Ablation protocol | Documented | `experiments/ablation/README.md` |
@@ -30,19 +30,21 @@ Use `configs/inference.example.json` as the path template. A public release
 should provide checksums and a stable archive or model-repository URL for every
 external file.
 
-## Missing PLM training entry point
+## Recovered PLM training entry point
 
-Five checkpoint files named
-`fold{1..5}_best_last4_cls_l2_finetune.pt` are available and their architecture
-is verified by inference. The experimental workspace also contains a quick
-single-split prototype. That prototype uses a 20% validation split and a
-different classifier head, so it cannot truthfully reproduce these five
-checkpoints. It is intentionally excluded from the public workflow.
+The five checkpoint files are external and are not present in this source
+checkout. The recovered five-fold training program was ported to
+`experiments/plm_finetuning/finetune_plm_tnfa_5fold.py` with portable paths and
+English text. Its architecture, stratified splitter, penultimate-layer CLS
+head, last-four-layer unfreezing, optimizer settings, validation-MCC selection,
+and checkpoint names match the recovered script.
 
-Until the exact original five-fold training entry point is recovered or
-independently reconstructed and validated against the checkpoints, this
-repository must not be described as a complete raw-data-to-weights
-reproduction.
+The recovered source and archived checkpoints match in architecture and
+checkpoint naming, but available timestamps do not prove that this exact source
+revision generated those weights. The expensive training run has not been
+repeated inside this release directory. Results can vary slightly with
+PyTorch, Transformers, CUDA, and hardware versions; archived checkpoints and
+OOF probabilities remain the numerical reference artifacts.
 
 ## Evaluation policy
 
