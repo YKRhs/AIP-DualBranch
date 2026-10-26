@@ -137,9 +137,26 @@ local computer. Detailed instructions are in [docs/INFERENCE.md](docs/INFERENCE.
 
 ## Large model files
 
-The base PLM and five fine-tuned checkpoints are intentionally excluded from
-Git history. The five checkpoints are approximately 13 GB in total. Their
-release location and checksums must be added before a public archival release.
+Large binary files are distributed through the
+[AIP-DualBranch model repository](https://huggingface.co/moyeyeye/AIP-DualBranch)
+instead of Git history. Download the five fine-tuned checkpoints and fitted
+downstream artifacts from the repository root with:
+
+```bash
+hf download moyeyeye/AIP-DualBranch \
+  --include "checkpoints/*" "artifacts/*" \
+  --local-dir .
+```
+
+The five checkpoints are approximately 13 GB before Hugging Face Xet
+deduplication. The public PLM-interact base model is not redistributed here;
+download it from
+[`danliu1226/PLM-interact-650M-humanV12`](https://huggingface.co/danliu1226/PLM-interact-650M-humanV12):
+
+```bash
+hf download danliu1226/PLM-interact-650M-humanV12 \
+  --local-dir models/plm_base
+```
 
 ## Reproducibility statement
 

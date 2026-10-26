@@ -11,3 +11,12 @@ Inference requires the following files:
 
 Large binary artifacts are excluded from normal Git tracking. Preserve their SHA-256 checksums when distributing them separately.
 
+The released files are hosted in
+[`moyeyeye/AIP-DualBranch`](https://huggingface.co/moyeyeye/AIP-DualBranch/tree/main/artifacts).
+From the source repository root, download them with:
+
+```bash
+hf download moyeyeye/AIP-DualBranch \
+  --include "artifacts/*" \
+  --local-dir .
+```

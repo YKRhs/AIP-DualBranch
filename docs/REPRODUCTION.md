@@ -26,9 +26,12 @@ The following files are not stored in ordinary Git history:
 - fitted deployment artifacts when their size exceeds normal Git limits;
 - generated PLM feature arrays and explanation caches.
 
-Use `configs/inference.example.json` as the path template. A public release
-should provide checksums and a stable archive or model-repository URL for every
-external file.
+Use `configs/inference.example.json` as the path template. The archived
+fine-tuned checkpoints and fitted deployment artifacts are available from
+[`moyeyeye/AIP-DualBranch`](https://huggingface.co/moyeyeye/AIP-DualBranch).
+The PLM base model remains available from its original repository,
+[`danliu1226/PLM-interact-650M-humanV12`](https://huggingface.co/danliu1226/PLM-interact-650M-humanV12),
+and is not redistributed by this project.
 
 ## Recovered PLM training entry point
 

@@ -18,6 +18,23 @@ On the original Windows workstation, `configs/local_runtime.bat` selects the tes
 - five fold checkpoints under `checkpoints`;
 - fitted branch and fusion artifacts under `artifacts`.
 
+Download the released checkpoints and fitted artifacts into those expected
+locations:
+
+```bash
+hf download moyeyeye/AIP-DualBranch \
+  --include "checkpoints/*" "artifacts/*" \
+  --local-dir .
+```
+
+The base model is maintained by its original authors and is not duplicated in
+the AIP-DualBranch release:
+
+```bash
+hf download danliu1226/PLM-interact-650M-humanV12 \
+  --local-dir models/plm_base
+```
+
 For files stored elsewhere, copy the template to `configs/inference.local.json` and edit its paths. Relative paths are resolved from the configuration file location. Absolute paths and environment variables are also supported.
 
 The configuration selection order is:

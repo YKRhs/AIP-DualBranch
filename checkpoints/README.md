@@ -12,9 +12,18 @@ fold5_best_last4_cls_l2_finetune.pt
 
 This directory contains documentation only in the source checkout; model weights
 are external files and are not committed. Each checkpoint is approximately
-2.6 GB and should be distributed outside ordinary Git history. Alternatively,
-create `configs/inference.local.json` and point `plm_fold_weights` to weights
-stored elsewhere.
+2.6 GB and is distributed through
+[`moyeyeye/AIP-DualBranch`](https://huggingface.co/moyeyeye/AIP-DualBranch/tree/main/checkpoints).
+Download the released files from the repository root with:
+
+```bash
+hf download moyeyeye/AIP-DualBranch \
+  --include "checkpoints/*" \
+  --local-dir .
+```
+
+Alternatively, create `configs/inference.local.json` and point
+`plm_fold_weights` to weights stored elsewhere.
 
 These files are five independently fine-tuned weight sets, one for each outer
 fold. The training script writes them under
