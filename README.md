@@ -137,10 +137,13 @@ local computer. Detailed instructions are in [docs/INFERENCE.md](docs/INFERENCE.
 
 ## Large model files
 
-Large binary files are distributed through the
-[AIP-DualBranch model repository](https://huggingface.co/moyeyeye/AIP-DualBranch)
-instead of Git history. Download the five fine-tuned checkpoints and fitted
-downstream artifacts from the repository root with:
+Large binary files are distributed through the Hugging Face model repository
+instead of Git history:
+
+<https://huggingface.co/moyeyeye/AIP-DualBranch>
+
+Download the five fine-tuned checkpoints and fitted downstream artifacts from
+the source repository root with:
 
 ```bash
 hf download moyeyeye/AIP-DualBranch \
